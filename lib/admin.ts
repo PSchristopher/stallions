@@ -2,7 +2,7 @@ import crypto from 'crypto';
 import { NextResponse } from 'next/server';
 
 const cookieName = process.env.ADMIN_COOKIE_NAME || 'stallions_admin';
-const adminPassword = process.env.ADMIN_PASSWORD;
+const adminPassword = process.env.ADMIN_PASSWORD ?? '';
 const adminSecret = process.env.ADMIN_SECRET || 'stallions-admin-secret';
 
 if (!adminPassword) {
