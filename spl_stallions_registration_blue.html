@@ -1,0 +1,181 @@
+
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow+Condensed:wght@400;600;700&family=Barlow:wght@400;500&display=swap');
+*{box-sizing:border-box;margin:0;padding:0;}
+.spl{background:#04122a;color:#fff;font-family:'Barlow',sans-serif;border-radius:16px;overflow:hidden;width:100%;}
+.top-bar{background:#071d3f;border-bottom:2px solid #1a4a8a;padding:12px 20px;display:flex;align-items:center;justify-content:space-between;}
+.logo-area{display:flex;align-items:center;gap:10px;}
+.logo-hex{width:44px;height:44px;background:#0a2d6e;border:2px solid #2a6cc4;border-radius:10px;display:flex;align-items:center;justify-content:center;font-family:'Bebas Neue',sans-serif;font-size:19px;color:#f5c518;letter-spacing:1px;}
+.brand-stack{display:flex;flex-direction:column;gap:1px;}
+.brand-name{font-family:'Bebas Neue',sans-serif;font-size:22px;letter-spacing:3px;color:#f5c518;line-height:1;}
+.brand-tag{font-size:10px;letter-spacing:3px;text-transform:uppercase;color:rgba(255,255,255,0.35);font-family:'Barlow Condensed',sans-serif;font-weight:600;}
+.season-pill{background:#0a2d6e;border:1px solid #2a6cc4;border-radius:20px;padding:5px 14px;font-family:'Barlow Condensed',sans-serif;font-size:12px;font-weight:700;letter-spacing:2px;color:#7db8f7;text-transform:uppercase;}
+
+.hero{background:#061529;border-bottom:1px solid #0f2d5c;padding:28px 20px 24px;text-align:center;position:relative;overflow:hidden;}
+.hero-date-row{display:flex;align-items:center;justify-content:center;gap:12px;margin-bottom:6px;}
+.hero-date-label{font-size:11px;letter-spacing:3px;text-transform:uppercase;color:rgba(255,255,255,0.3);font-family:'Barlow Condensed',sans-serif;font-weight:600;}
+.hero-date{font-family:'Bebas Neue',sans-serif;font-size:52px;color:#fff;letter-spacing:2px;line-height:1;}
+.hero-date span{color:#f5c518;}
+.hero-chips{display:flex;align-items:center;justify-content:center;gap:8px;flex-wrap:wrap;margin-top:12px;}
+.chip{display:flex;align-items:center;gap:6px;padding:6px 14px;background:#0a2040;border:1px solid #1a4070;border-radius:6px;font-family:'Barlow Condensed',sans-serif;font-size:13px;font-weight:600;letter-spacing:1px;color:#9ecbf7;}
+.chip-dot{width:6px;height:6px;border-radius:50%;background:#2a6cc4;flex-shrink:0;}
+
+.stats-row{display:grid;grid-template-columns:repeat(3,1fr);border-bottom:1px solid #0f2d5c;}
+.stat{padding:16px;text-align:center;border-right:1px solid #0f2d5c;}
+.stat:last-child{border-right:none;}
+.stat-num{font-family:'Bebas Neue',sans-serif;font-size:28px;color:#f5c518;letter-spacing:1px;line-height:1;}
+.stat-lbl{font-size:10px;text-transform:uppercase;letter-spacing:2px;color:rgba(255,255,255,0.3);font-family:'Barlow Condensed',sans-serif;font-weight:600;margin-top:3px;}
+
+.two-col{display:grid;grid-template-columns:1fr 1fr;gap:0;border-bottom:1px solid #0f2d5c;}
+.col-block{padding:20px;}
+.col-block+.col-block{border-left:1px solid #0f2d5c;}
+.col-title{display:flex;align-items:center;gap:8px;margin-bottom:14px;}
+.col-title-icon{width:20px;height:20px;background:#0a2d6e;border-radius:5px;display:flex;align-items:center;justify-content:center;font-size:11px;}
+.col-title-text{font-family:'Barlow Condensed',sans-serif;font-size:13px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:#5a9ee0;}
+.prize-card{background:#071d3f;border:1px solid #0f2d5c;border-radius:8px;padding:12px;margin-bottom:8px;}
+.prize-card:last-child{margin-bottom:0;}
+.prize-rank{font-size:10px;text-transform:uppercase;letter-spacing:2px;color:rgba(255,255,255,0.3);font-family:'Barlow Condensed',sans-serif;font-weight:600;margin-bottom:4px;}
+.prize-val{font-family:'Bebas Neue',sans-serif;font-size:22px;color:#f5c518;letter-spacing:1px;line-height:1;}
+.prize-sub{font-size:12px;color:rgba(255,255,255,0.4);margin-top:2px;font-family:'Barlow',sans-serif;}
+.fee-row{display:flex;align-items:center;justify-content:space-between;padding:9px 0;border-bottom:0.5px solid #0f2d5c;}
+.fee-row:last-child{border-bottom:none;}
+.fee-name{font-size:13px;color:rgba(255,255,255,0.6);font-family:'Barlow',sans-serif;}
+.fee-val{font-family:'Barlow Condensed',sans-serif;font-size:14px;font-weight:700;color:#7db8f7;}
+.fee-val.gold{color:#f5c518;}
+.fee-tag{font-size:11px;color:rgba(255,255,255,0.4);font-family:'Barlow',sans-serif;}
+
+.section-block{padding:20px;border-bottom:1px solid #0f2d5c;}
+.section-block:last-child{border-bottom:none;}
+.sec-title{font-size:10px;letter-spacing:3px;text-transform:uppercase;color:rgba(255,255,255,0.25);font-family:'Barlow Condensed',sans-serif;font-weight:700;margin-bottom:12px;}
+
+.zones{display:flex;gap:6px;flex-wrap:wrap;}
+.zone-pill{padding:6px 14px;background:#071d3f;border:1px solid #1a4070;border-radius:6px;font-size:13px;font-weight:600;color:#7db8f7;font-family:'Barlow Condensed',sans-serif;letter-spacing:1px;}
+
+.awards-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;}
+.award-card{background:#071d3f;border:1px solid #0f2d5c;border-radius:8px;padding:12px 10px;text-align:center;}
+.award-icon{width:28px;height:28px;background:#0a2d6e;border-radius:6px;margin:0 auto 8px;display:flex;align-items:center;justify-content:center;font-size:13px;}
+.award-title{font-size:11px;text-transform:uppercase;letter-spacing:1px;color:rgba(255,255,255,0.35);font-family:'Barlow Condensed',sans-serif;font-weight:600;margin-bottom:4px;}
+.award-prize{font-family:'Barlow Condensed',sans-serif;font-size:13px;font-weight:700;color:#f5c518;}
+
+.contacts-row{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;}
+.contact-card{background:#071d3f;border:1px solid #0f2d5c;border-radius:8px;padding:10px 14px;display:flex;align-items:center;gap:10px;}
+.contact-avatar{width:30px;height:30px;border-radius:50%;background:#0a2d6e;border:1px solid #1a4a8a;display:flex;align-items:center;justify-content:center;font-family:'Barlow Condensed',sans-serif;font-size:12px;font-weight:700;color:#7db8f7;flex-shrink:0;}
+.contact-name{font-size:13px;font-weight:500;color:#fff;font-family:'Barlow',sans-serif;}
+.contact-num{font-size:12px;color:rgba(255,255,255,0.4);font-family:'Barlow',sans-serif;}
+
+.cta-bar{padding:20px;text-align:center;background:#071d3f;}
+.cta-btn{display:inline-block;background:#1a5cc4;color:#fff;font-family:'Bebas Neue',sans-serif;font-size:18px;letter-spacing:3px;padding:14px 48px;border-radius:8px;border:none;cursor:pointer;text-transform:uppercase;transition:background 0.15s;}
+.cta-btn:hover{background:#2266d4;}
+.cta-note{font-size:11px;color:rgba(255,255,255,0.25);margin-top:8px;letter-spacing:1px;font-family:'Barlow',sans-serif;}
+</style>
+
+<div class="spl">
+  <div class="top-bar">
+    <div class="logo-area">
+      <div class="logo-hex">SPL</div>
+      <div class="brand-stack">
+        <span class="brand-name">Stallions</span>
+        <span class="brand-tag">Premiere League</span>
+      </div>
+    </div>
+    <span class="season-pill">Season 2</span>
+  </div>
+
+  <div class="hero">
+    <div class="hero-date-label" style="margin-bottom:6px;">Match Day</div>
+    <div class="hero-date">MAY <span>25</span></div>
+    <div class="hero-chips">
+      <div class="chip"><span class="chip-dot"></span>8 Franchises</div>
+      <div class="chip"><span class="chip-dot"></span>2 Icons</div>
+      <div class="chip"><span class="chip-dot"></span>6 Overs</div>
+      <div class="chip"><span class="chip-dot"></span>2 Grounds</div>
+    </div>
+  </div>
+
+  <div class="stats-row">
+    <div class="stat"><div class="stat-num">6</div><div class="stat-lbl">Overs</div></div>
+    <div class="stat"><div class="stat-num">₹300</div><div class="stat-lbl">Player Fee</div></div>
+    <div class="stat"><div class="stat-num">₹5K</div><div class="stat-lbl">Team Entry</div></div>
+  </div>
+
+  <div class="two-col">
+    <div class="col-block">
+      <div class="col-title">
+        <div class="col-title-icon">🏆</div>
+        <span class="col-title-text">Prizes</span>
+      </div>
+      <div class="prize-card">
+        <div class="prize-rank">Winner</div>
+        <div class="prize-val">₹20,000</div>
+        <div class="prize-sub">+ Trophy</div>
+      </div>
+      <div class="prize-card">
+        <div class="prize-rank">Runner-up</div>
+        <div class="prize-val">₹10,000</div>
+        <div class="prize-sub">+ Trophy</div>
+      </div>
+      <div class="prize-card">
+        <div class="prize-rank">Final Man of Match</div>
+        <div class="prize-val" style="font-size:16px;color:#7db8f7;">Trophy + T-shirt + Cap</div>
+        <div class="prize-sub"></div>
+      </div>
+    </div>
+    <div class="col-block">
+      <div class="col-title">
+        <div class="col-title-icon">💳</div>
+        <span class="col-title-text">Fees & Perks</span>
+      </div>
+      <div class="fee-row"><span class="fee-name">Team entry</span><span class="fee-val gold">₹5,000</span></div>
+      <div class="fee-row"><span class="fee-name">Player registration</span><span class="fee-val gold">₹300</span></div>
+      <div class="fee-row"><span class="fee-name">Jersey</span><span class="fee-tag">By committee</span></div>
+      <div class="fee-row"><span class="fee-name">Lunch</span><span class="fee-tag">Provided</span></div>
+      <div class="fee-row"><span class="fee-name">Cap — Man of Match</span><span class="fee-tag">All MOMs</span></div>
+    </div>
+  </div>
+
+  <div class="section-block">
+    <div class="sec-title">Players eligible from</div>
+    <div class="zones">
+      <span class="zone-pill">Vadakarpathy</span>
+      <span class="zone-pill">Kozhinjamipara</span>
+      <span class="zone-pill">Eruthenpathy</span>
+      <span class="zone-pill">Pudussery</span>
+    </div>
+  </div>
+
+  <div class="section-block">
+    <div class="sec-title">Awards — Green Vicky Ball</div>
+    <div class="awards-grid">
+      <div class="award-card">
+        <div class="award-icon">🏏</div>
+        <div class="award-title">MVP</div>
+        <div class="award-prize">Trophy + Bat</div>
+      </div>
+      <div class="award-card">
+        <div class="award-icon">🎳</div>
+        <div class="award-title">Best Bowler</div>
+        <div class="award-prize">Trophy + Shoe</div>
+      </div>
+      <div class="award-card">
+        <div class="award-icon">🦇</div>
+        <div class="award-title">Best Batsman</div>
+        <div class="award-prize">Trophy + Bat</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section-block">
+    <div class="sec-title">Contacts</div>
+    <div class="contacts-row">
+      <div class="contact-card"><div class="contact-avatar">PR</div><div><div class="contact-name">Praveen</div><div class="contact-num">98950 12050</div></div></div>
+      <div class="contact-card"><div class="contact-avatar">AJ</div><div><div class="contact-name">Ajay</div><div class="contact-num">77361 98405</div></div></div>
+      <div class="contact-card"><div class="contact-avatar">AN</div><div><div class="contact-name">Antony</div><div class="contact-num">98464 19945</div></div></div>
+      <div class="contact-card"><div class="contact-avatar">MJ</div><div><div class="contact-name">Manju</div><div class="contact-num">73569 48017</div></div></div>
+    </div>
+  </div>
+
+  <div class="cta-bar">
+    <button class="cta-btn" onclick="sendPrompt('I want to register for SPL Season 2')">Register Now</button>
+    <div class="cta-note">Admin verifies within 24 hrs after payment confirmation</div>
+  </div>
+</div>
