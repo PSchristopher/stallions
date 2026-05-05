@@ -28,6 +28,8 @@ copy .env.example .env.local
 
 Update `DATABASE_URL` and Supabase keys as needed.
 
+For production on Vercel or other IPv4/serverless hosts, use the Supabase pooler connection string from **Supabase Dashboard > Connect > Transaction pooler** instead of the direct `db.<project-ref>.supabase.co:5432` URL. Keep `DATABASE_SSL=true`.
+
 3. Start PostgreSQL (if using local Docker):
 
 ```bash
@@ -38,10 +40,11 @@ Or skip this if using Supabase.
 
 4. Run database migrations:
 
+The migration scripts read `.env` / `.env.local` automatically, so you do not need to set `DATABASE_URL` manually each time.
+
 **On Windows (PowerShell):**
 
 ```powershell
-$env:DATABASE_URL = "your_database_url"
 .\migrate.ps1 -Command up
 ```
 
@@ -69,6 +72,8 @@ Or:
 ```bash
 npm run dev
 ```
+
+`npm run dev` runs pending migrations before starting Next.js.
 
 Open `http://localhost:3000`
 

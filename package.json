@@ -3,6 +3,9 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
+    "migrate": "node scripts/migrate.mjs up",
+    "migrate:status": "node scripts/migrate.mjs status",
+    "predev": "node scripts/migrate.mjs up",
     "dev": "next dev",
     "build": "next build",
     "start": "next start"

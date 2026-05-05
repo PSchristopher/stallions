@@ -5,13 +5,21 @@ if (!connectionString) {
   throw new Error('DATABASE_URL environment variable is required.');
 }
 
-const pool = new Pool({
-  connectionString,
-  ssl: process.env.DATABASE_SSL === 'true' ? { rejectUnauthorized: false } : undefined
-});
-console.log('Database connection pool created.');
+const globalForPg = globalThis as unknown as {
+  pgPool?: Pool;
+};
+
+const pool =
+  globalForPg.pgPool ??
+  new Pool({
+    connectionString,
+    ssl: process.env.DATABASE_SSL === 'true' ? { rejectUnauthorized: false } : undefined
+  });
+
+if (process.env.NODE_ENV !== 'production') {
+  globalForPg.pgPool = pool;
+}
+
 export async function query(text: string, params: unknown[] = []) {
-  const result = await pool.query(text, params);
-  console.log('result', result);
-  return result;
+  return pool.query(text, params);
 }
