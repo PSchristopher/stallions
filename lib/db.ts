@@ -9,8 +9,9 @@ const pool = new Pool({
   connectionString,
   ssl: process.env.DATABASE_SSL === 'true' ? { rejectUnauthorized: false } : undefined
 });
-
+console.log('Database connection pool created.');
 export async function query(text: string, params: unknown[] = []) {
   const result = await pool.query(text, params);
+  console.log('result', result);
   return result;
 }
