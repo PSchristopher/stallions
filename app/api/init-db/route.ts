@@ -9,6 +9,7 @@ export async function GET() {
         id SERIAL PRIMARY KEY,
         name TEXT NOT NULL,
         phone TEXT NOT NULL UNIQUE,
+        playing_role TEXT NOT NULL DEFAULT 'All rounder',
         photo_url TEXT NOT NULL,
         aadhaar_url TEXT NOT NULL,
         payment_proof_url TEXT NOT NULL,

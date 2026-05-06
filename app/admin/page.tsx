@@ -11,6 +11,7 @@ type Registration = {
   id: number;
   name: string;
   phone: string;
+  playingRole: string;
   status: RegistrationStatus;
   photoUrl: string;
   aadhaarUrl: string;
@@ -947,12 +948,13 @@ export default function AdminPage() {
                                   className="p-img"
                                   alt={`${registration.name} profile`}
                                 />
-                                <div className="p-info">
-                                  <div className="p-name">{registration.name}</div>
-                                  <div className="p-phone">{registration.phone}</div>
-                                  <span className={`status-badge ${getStatusClass(registration.status)}`}>
-                                    {getStatusLabel(registration.status)}
-                                  </span>
+                                  <div className="p-info">
+                                    <div className="p-name">{registration.name}</div>
+                                    <div className="p-phone">{registration.phone}</div>
+                                    <div className="p-phone">{registration.playingRole}</div>
+                                    <span className={`status-badge ${getStatusClass(registration.status)}`}>
+                                      {getStatusLabel(registration.status)}
+                                    </span>
                                 </div>
                               </div>
                             </div>
@@ -1019,6 +1021,9 @@ export default function AdminPage() {
                             </div>
                             <div className="p-phone" style={{ textAlign: 'center', marginBottom: 8 }}>
                               {lotPlayer.phone}
+                            </div>
+                            <div className="p-phone" style={{ textAlign: 'center', marginBottom: 8 }}>
+                              {lotPlayer.playingRole}
                             </div>
                             <div style={{ textAlign: 'center', marginBottom: 16 }}>
                               <span className={`status-badge ${getStatusClass(lotPlayer.status)}`}>
@@ -1105,6 +1110,7 @@ export default function AdminPage() {
                       {selectedReg.name}
                     </h2>
                     <p className="p-phone">{selectedReg.phone}</p>
+                    <p className="p-phone">Role: {selectedReg.playingRole}</p>
                     <p className="p-phone">
                       Registered: {new Date(selectedReg.createdAt).toLocaleDateString()}
                     </p>

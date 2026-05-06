@@ -746,7 +746,7 @@ export default function RegisterPage() {
                 <div className="spl-form-header-fee">
                   <div className="spl-fee-label">Entry Fee</div>
                   <div className="spl-fee-amount">₹300</div>
-                  <div className="spl-fee-note">Non-refundable</div>
+                  {/* <div className="spl-fee-note">Non-refundable</div> */}
                 </div>
               </div>
 
@@ -771,6 +771,16 @@ export default function RegisterPage() {
                         className="spl-input"
                       />
                     </div>
+                  </div>
+
+                  <div className="spl-field" style={{ marginBottom: 16 }}>
+                    <label className="spl-label" htmlFor="playingRole">Playing Role</label>
+                    <select id="playingRole" name="playingRole" required defaultValue="" className="spl-input">
+                      <option value="" disabled>Select your role</option>
+                      <option value="All rounder">All rounder</option>
+                      <option value="Batter">Batter</option>
+                      <option value="Bowler">Bowler</option>
+                    </select>
                   </div>
 
                   {/* Divider */}

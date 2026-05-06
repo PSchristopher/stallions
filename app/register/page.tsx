@@ -100,6 +100,16 @@ export default function RegisterPage() {
           </div>
 
           <div className="field">
+            <label htmlFor="playingRole">Playing Role</label>
+            <select id="playingRole" name="playingRole" required defaultValue="">
+              <option value="" disabled>Select your role</option>
+              <option value="All rounder">All rounder</option>
+              <option value="Batter">Batter</option>
+              <option value="Bowler">Bowler</option>
+            </select>
+          </div>
+
+          <div className="field">
             <label htmlFor="photo">Player Photo</label>
             <input id="photo" name="photo" type="file" accept="image/*" required />
           </div>

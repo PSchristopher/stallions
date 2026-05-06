@@ -6,6 +6,7 @@ type Registration = {
   id: number;
   name: string;
   phone: string;
+  playingRole: string;
   status: string;
   photoUrl: string;
   aadhaarUrl: string;
@@ -76,6 +77,7 @@ export default function SearchPage() {
               <div>
                 <h2>{item.name}</h2>
                 <p><strong>Phone:</strong> {item.phone}</p>
+                <p><strong>Playing Role:</strong> {item.playingRole}</p>
                 <p><strong>Status:</strong> <span className={`status-badge ${item.status === 'verified' ? 'status-verified' : 'status-pending'}`}>{item.status}</span></p>
                 <p><strong>Registered:</strong> {new Date(item.createdAt).toLocaleString()}</p>
               </div>

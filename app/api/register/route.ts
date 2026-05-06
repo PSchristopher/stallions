@@ -4,6 +4,8 @@ import { saveFile } from '@/lib/storage';
 
 export const runtime = 'nodejs';
 
+const playingRoles = ['All rounder', 'Batter', 'Bowler'] as const;
+
 async function requiredString(value: FormDataEntryValue | null, label: string) {
   if (!value || typeof value !== 'string' || !value.trim()) {
     throw new Error(`${label} is required.`);
@@ -25,9 +27,14 @@ export async function POST(request: Request) {
     const formData = await request.formData();
     const name = await requiredString(formData.get('name'), 'Name');
     const phone = await requiredString(formData.get('phone'), 'Phone');
+    const playingRole = await requiredString(formData.get('playingRole'), 'Playing role');
     const photoFile = await requiredFile(formData.get('photo'), 'Player photo');
     const aadhaarFile = await requiredFile(formData.get('aadhaar'), 'Aadhaar photo');
     const paymentProofFile = await requiredFile(formData.get('paymentProof'), 'Payment proof');
+
+    if (!playingRoles.includes(playingRole as (typeof playingRoles)[number])) {
+      throw new Error('Please select a valid playing role.');
+    }
 
     const existing = await query('SELECT id FROM registrations WHERE phone = $1', [phone]);
     if (existing.rowCount > 0) {
@@ -39,8 +46,8 @@ export async function POST(request: Request) {
     const paymentProofUrl = await saveFile(paymentProofFile, 'payment-proof');
 
     await query(
-      'INSERT INTO registrations (name, phone, photo_url, aadhaar_url, payment_proof_url, status) VALUES ($1, $2, $3, $4, $5, $6)',
-      [name, phone, photoUrl, aadhaarUrl, paymentProofUrl, 'pending']
+      'INSERT INTO registrations (name, phone, playing_role, photo_url, aadhaar_url, payment_proof_url, status) VALUES ($1, $2, $3, $4, $5, $6, $7)',
+      [name, phone, playingRole, photoUrl, aadhaarUrl, paymentProofUrl, 'pending']
     );
 
     return NextResponse.json({ success: true }, { status: 201 });
