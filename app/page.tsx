@@ -3,6 +3,14 @@
 import { useRef, useState } from 'react';
 import Link from 'next/link';
 
+const paymentUpiId = 'jerinvijay507@oksbi';
+const paymentPhone = '+91 70122 25381';
+const paymentAmount = '300';
+const paymentPayee = 'SPL Stallions Premiere League';
+const paymentNote = 'SPL Season 2 Registration';
+const paymentUri = `upi://pay?pa=${encodeURIComponent(paymentUpiId)}&pn=${encodeURIComponent(paymentPayee)}&am=${paymentAmount}&cu=INR&tn=${encodeURIComponent(paymentNote)}`;
+const paymentQrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=220x220&margin=10&data=${encodeURIComponent(paymentUri)}`;
+
 export default function RegisterPage() {
   const formRef = useRef<HTMLFormElement>(null);
   const [loading, setLoading] = useState(false);
@@ -223,6 +231,107 @@ export default function RegisterPage() {
           color: #3d6a99; font-weight: 600; margin-top: 3px;
         }
 
+        .spl-payment-card {
+          background: #ffffff;
+          border: 1px solid var(--border);
+          border-radius: var(--radius-lg);
+          overflow: hidden;
+        }
+        .spl-payment-top {
+          background: var(--gold-bg);
+          border-bottom: 1px solid #f2df9c;
+          padding: 14px 18px;
+          display: flex; align-items: center; justify-content: space-between; gap: 12px;
+        }
+        .spl-payment-title {
+          font-family: 'Barlow Condensed', sans-serif;
+          font-size: 12px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase;
+          color: #9a6b00;
+        }
+        .spl-payment-amount {
+          font-family: 'Bebas Neue', sans-serif;
+          font-size: 30px; letter-spacing: 1px; color: var(--navy-txt); line-height: 1;
+        }
+        .spl-payment-body {
+          padding: 18px;
+          display: grid;
+          grid-template-columns: 132px 1fr;
+          gap: 16px;
+          align-items: center;
+        }
+        .spl-payment-qr-link {
+          display: block;
+          border: 1px solid var(--border);
+          border-radius: var(--radius);
+          padding: 8px;
+          background: #fff;
+          transition: transform 0.15s, border-color 0.15s;
+        }
+        .spl-payment-qr-link:hover { transform: translateY(-1px); border-color: var(--blue); }
+        .spl-payment-qr {
+          width: 100%;
+          aspect-ratio: 1;
+          display: block;
+        }
+        .spl-payment-line {
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          gap: 10px;
+          border-bottom: 1px solid #eef3fa;
+          padding: 8px 0;
+          font-size: 13px;
+          color: var(--body-txt);
+        }
+        .spl-payment-line:first-child { padding-top: 0; }
+        .spl-payment-line strong {
+          color: var(--navy-txt);
+          font-weight: 700;
+          overflow-wrap: anywhere;
+          text-align: right;
+        }
+        .spl-payment-actions {
+          display: grid;
+          grid-template-columns: 1fr 1fr;
+          gap: 10px;
+          margin-top: 14px;
+        }
+        .spl-pay-button,
+        .spl-contact-button {
+          min-height: 42px;
+          border-radius: var(--radius);
+          display: inline-flex;
+          align-items: center;
+          justify-content: center;
+          text-decoration: none;
+          font-family: 'Barlow Condensed', sans-serif;
+          font-size: 12px;
+          font-weight: 700;
+          letter-spacing: 1.5px;
+          text-transform: uppercase;
+        }
+        .spl-pay-button {
+          background: var(--blue);
+          color: #fff;
+        }
+        .spl-pay-button:hover { background: var(--blue-lt); }
+        .spl-contact-button {
+          background: var(--sky);
+          color: var(--blue);
+          border: 1px solid var(--border);
+        }
+        .spl-payment-note {
+          margin-top: 10px;
+          font-size: 11px;
+          color: var(--muted);
+          line-height: 1.5;
+        }
+        @media (max-width: 460px) {
+          .spl-payment-body { grid-template-columns: 1fr; }
+          .spl-payment-qr-link { max-width: 180px; margin: 0 auto; }
+          .spl-payment-actions { grid-template-columns: 1fr; }
+        }
+
         /* ── INFO CARDS ── */
         .spl-info-card {
           background: #fff;
@@ -411,6 +520,17 @@ export default function RegisterPage() {
           width: 100%; height: 76px; object-fit: cover;
           display: block; position: relative; z-index: 1;
         }
+        .spl-payment-proof-note {
+          margin: -10px 0 20px;
+          padding: 10px 12px;
+          border: 1px solid #f2df9c;
+          border-radius: var(--radius);
+          background: var(--gold-bg);
+          color: #8a5f00;
+          font-size: 12px;
+          line-height: 1.5;
+          font-weight: 600;
+        }
 
         /* Alerts */
         .spl-alert-err {
@@ -521,7 +641,7 @@ export default function RegisterPage() {
               <span className="spl-season-dot" />
               Season 2 — Registration Open
             </div>
-            <div className="spl-date-tag">Match Day: <span>May 25, 2026</span></div>
+            <div className="spl-date-tag">Match Day: <span>May 24, 2026</span></div>
           </div>
 
           <div className="spl-grid">
@@ -554,8 +674,46 @@ export default function RegisterPage() {
                 </div>
               </div>
 
+              <div className="spl-payment-card">
+                <div className="spl-payment-top">
+                  <div>
+                    <div className="spl-payment-title">Pay Registration Fee</div>
+                    <div className="spl-payment-amount">₹{paymentAmount}</div>
+                  </div>
+                  <span className="spl-season-tag" style={{ background: '#fff', color: '#9a6b00', borderColor: '#f2df9c' }}>
+                    UPI Ready
+                  </span>
+                </div>
+                <div className="spl-payment-body">
+                  <a className="spl-payment-qr-link" href={paymentUri} aria-label="Pay SPL registration fee using UPI">
+                    <img className="spl-payment-qr" src={paymentQrUrl} alt="UPI QR code for SPL registration fee" />
+                  </a>
+                  <div>
+                    <div className="spl-payment-line">
+                      <span>UPI ID</span>
+                      <strong>{paymentUpiId}</strong>
+                    </div>
+                    <div className="spl-payment-line">
+                      <span>Phone</span>
+                      <strong>{paymentPhone}</strong>
+                    </div>
+                    <div className="spl-payment-line">
+                      <span>Amount</span>
+                      <strong>₹{paymentAmount}</strong>
+                    </div>
+                    <div className="spl-payment-actions">
+                      <a className="spl-pay-button" href={paymentUri}>Pay Now</a>
+                      <a className="spl-contact-button" href="tel:+917012225381">Call</a>
+                    </div>
+                    <p className="spl-payment-note">
+                      After payment, upload the screenshot in the payment proof field before submitting.
+                    </p>
+                  </div>
+                </div>
+              </div>
+
               {/* Checklist */}
-              <div className="spl-info-card">
+              {/* <div className="spl-info-card">
                 <div className="spl-info-head">
                   <div className="spl-info-head-icon">📋</div>
                   <span className="spl-info-head-title">What You'll Need</span>
@@ -574,7 +732,7 @@ export default function RegisterPage() {
                     </li>
                   ))}
                 </ul>
-              </div>
+              </div> */}
             </div>
 
             {/* ── FORM ── */}
@@ -679,6 +837,9 @@ export default function RegisterPage() {
                         </div>
                       )}
                     </div>
+                    <p className="spl-payment-proof-note">
+                      Original payment screenshot is mandatory. Screenshots for payments made to any other UPI ID or phone number will not be considered for verification.
+                    </p>
                   </div>
 
                   {error && (

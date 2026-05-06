@@ -2,6 +2,14 @@
 
 import { useRef, useState } from 'react';
 
+const paymentUpiId = 'jerinvijay507@oksbi';
+const paymentPhone = '+91 70122 25381';
+const paymentAmount = '300';
+const paymentPayee = 'SPL Stallions Premiere League';
+const paymentNote = 'SPL Season 2 Registration';
+const paymentUri = `upi://pay?pa=${encodeURIComponent(paymentUpiId)}&pn=${encodeURIComponent(paymentPayee)}&am=${paymentAmount}&cu=INR&tn=${encodeURIComponent(paymentNote)}`;
+const paymentQrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=220x220&margin=10&data=${encodeURIComponent(paymentUri)}`;
+
 export default function RegisterPage() {
   const formRef = useRef<HTMLFormElement>(null);
   const [loading, setLoading] = useState(false);
@@ -49,6 +57,37 @@ export default function RegisterPage() {
           The registration fee is <strong>₹300</strong>. Please upload the payment proof clearly so the admin can verify quickly.
         </p>
 
+        <div
+          style={{
+            display: 'grid',
+            gridTemplateColumns: '140px 1fr',
+            gap: 18,
+            alignItems: 'center',
+            margin: '20px 0',
+            padding: 18,
+            border: '1px solid rgba(255,255,255,0.16)',
+            borderRadius: 10,
+            background: 'rgba(255,255,255,0.06)'
+          }}
+        >
+          <a href={paymentUri} aria-label="Pay SPL registration fee using UPI">
+            <img
+              src={paymentQrUrl}
+              alt="UPI QR code for SPL registration fee"
+              style={{ width: '100%', display: 'block', borderRadius: 8, background: '#fff', padding: 8 }}
+            />
+          </a>
+          <div>
+            <p className="page-subtitle" style={{ marginBottom: 10 }}>
+              Pay <strong>₹{paymentAmount}</strong> to <strong>{paymentUpiId}</strong>
+            </p>
+            <p className="page-subtitle" style={{ marginBottom: 14 }}>
+              Contact: <a href="tel:+917012225381">{paymentPhone}</a>
+            </p>
+            <a href={paymentUri}>Pay ₹{paymentAmount} with UPI</a>
+          </div>
+        </div>
+
         <form ref={formRef} onSubmit={handleSubmit}>
           <div className="field">
             <label htmlFor="name">Full Name</label>
@@ -73,6 +112,9 @@ export default function RegisterPage() {
           <div className="field">
             <label htmlFor="paymentProof">Payment Screenshot (₹300 proof)</label>
             <input id="paymentProof" name="paymentProof" type="file" accept="image/*" required />
+            <p style={{ marginTop: 8, color: '#facc15', fontSize: 13, lineHeight: 1.5 }}>
+              Original payment screenshot is mandatory. Screenshots for payments made to any other UPI ID or phone number will not be considered for verification.
+            </p>
           </div>
 
           {error ? <p className="error-text">{error}</p> : null}
