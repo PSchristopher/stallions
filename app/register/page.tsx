@@ -4,10 +4,16 @@ import { useRef, useState } from 'react';
 
 const paymentUpiId = 'jerinvijay507@oksbi';
 const paymentPhone = '+91 70122 25381';
-const paymentAmount = '300';
-const paymentPayee = 'SPL Stallions Premiere League';
-const paymentNote = 'SPL Season 2 Registration';
-const paymentUri = `upi://pay?pa=${encodeURIComponent(paymentUpiId)}&pn=${encodeURIComponent(paymentPayee)}&am=${paymentAmount}&cu=INR&tn=${encodeURIComponent(paymentNote)}`;
+const paymentAmount = '300.00';
+const paymentDisplayAmount = '300';
+const paymentPayee = 'Jerinvijay';
+const paymentParams = new URLSearchParams({
+  pa: paymentUpiId,
+  pn: paymentPayee,
+  am: paymentAmount,
+  cu: 'INR',
+});
+const paymentUri = `upi://pay?${paymentParams.toString()}`;
 const paymentQrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=220x220&margin=10&data=${encodeURIComponent(paymentUri)}`;
 
 export default function RegisterPage() {
@@ -79,12 +85,12 @@ export default function RegisterPage() {
           </a>
           <div>
             <p className="page-subtitle" style={{ marginBottom: 10 }}>
-              Pay <strong>₹{paymentAmount}</strong> to <strong>{paymentUpiId}</strong>
+              Pay <strong>₹{paymentDisplayAmount}</strong> to <strong>{paymentUpiId}</strong>
             </p>
             <p className="page-subtitle" style={{ marginBottom: 14 }}>
               Contact: <a href="tel:+917012225381">{paymentPhone}</a>
             </p>
-            <a href={paymentUri}>Pay ₹{paymentAmount} with UPI</a>
+            <a href={paymentUri}>Pay ₹{paymentDisplayAmount} with UPI</a>
           </div>
         </div>
 

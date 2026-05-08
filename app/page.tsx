@@ -5,10 +5,16 @@ import Link from 'next/link';
 
 const paymentUpiId = 'jerinvijay507@oksbi';
 const paymentPhone = '+91 70122 25381';
-const paymentAmount = '300';
-const paymentPayee = 'SPL Stallions Premiere League';
-const paymentNote = 'SPL Season 2 Registration';
-const paymentUri = `upi://pay?pa=${encodeURIComponent(paymentUpiId)}&pn=${encodeURIComponent(paymentPayee)}&am=${paymentAmount}&cu=INR&tn=${encodeURIComponent(paymentNote)}`;
+const paymentAmount = '300.00';
+const paymentDisplayAmount = '300';
+const paymentPayee = 'Jerinvijay';
+const paymentParams = new URLSearchParams({
+  pa: paymentUpiId,
+  pn: paymentPayee,
+  am: paymentAmount,
+  cu: 'INR',
+});
+const paymentUri = `upi://pay?${paymentParams.toString()}`;
 const paymentQrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=220x220&margin=10&data=${encodeURIComponent(paymentUri)}`;
 
 export default function RegisterPage() {
@@ -678,7 +684,7 @@ export default function RegisterPage() {
                 <div className="spl-payment-top">
                   <div>
                     <div className="spl-payment-title">Pay Registration Fee</div>
-                    <div className="spl-payment-amount">₹{paymentAmount}</div>
+                    <div className="spl-payment-amount">₹{paymentDisplayAmount}</div>
                   </div>
                   <span className="spl-season-tag" style={{ background: '#fff', color: '#9a6b00', borderColor: '#f2df9c' }}>
                     UPI Ready
@@ -699,7 +705,7 @@ export default function RegisterPage() {
                     </div>
                     <div className="spl-payment-line">
                       <span>Amount</span>
-                      <strong>₹{paymentAmount}</strong>
+                      <strong>₹{paymentDisplayAmount}</strong>
                     </div>
                     <div className="spl-payment-actions">
                       <a className="spl-pay-button" href={paymentUri}>Pay Now</a>

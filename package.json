@@ -5,8 +5,8 @@
   "scripts": {
     "migrate": "node scripts/migrate.mjs up",
     "migrate:status": "node scripts/migrate.mjs status",
-    "predev": "node scripts/migrate.mjs up",
-    "dev": "next dev",
+    "dev": "next dev -p 3010",
+    "dev:migrate": "npm run migrate && next dev -p 3010",
     "build": "next build",
     "start": "next start"
   },
