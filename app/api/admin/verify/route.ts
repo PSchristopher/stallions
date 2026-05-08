@@ -9,13 +9,13 @@ export async function POST(request: Request) {
 
   const body = await request.json();
   const id = Number(body?.id);
-  const status = body?.status || 'verified';
+  const status = body?.status || 'approved';
 
   if (!id) {
     return NextResponse.json({ error: 'Registration id is required.' }, { status: 400 });
   }
 
-  if (!['verified', 'rejected'].includes(status)) {
+  if (!['approved', 'sold', 'unsold'].includes(status)) {
     return NextResponse.json({ error: 'Invalid status.' }, { status: 400 });
   }
 

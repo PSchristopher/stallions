@@ -5,8 +5,8 @@ import { saveFile } from '@/lib/storage';
 export const runtime = 'nodejs';
 
 const playingRoles = ['All rounder', 'Batter', 'Bowler'] as const;
-const maxUploadFileBytes = 1.2 * 1024 * 1024;
-const maxTotalUploadBytes = 4 * 1024 * 1024;
+const maxUploadFileBytes = 650 * 1024;
+const maxTotalUploadBytes = 2 * 1024 * 1024;
 
 async function requiredString(value: FormDataEntryValue | null, label: string) {
   if (!value || typeof value !== 'string' || !value.trim()) {
@@ -26,7 +26,7 @@ async function requiredFile(value: FormDataEntryValue | null, label: string) {
   }
 
   if (value.size > maxUploadFileBytes) {
-    throw new Error(`${label} is too large. Please upload an image under 1.2 MB.`);
+    throw new Error(`${label} is too large. Please upload an image under 650 KB.`);
   }
 
   return value as File;
@@ -56,9 +56,11 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: 'Phone number already registered.' }, { status: 409 });
     }
 
-    const photoUrl = await saveFile(photoFile, 'player-photo');
-    const aadhaarUrl = await saveFile(aadhaarFile, 'aadhaar-photo');
-    const paymentProofUrl = await saveFile(paymentProofFile, 'payment-proof');
+    const [photoUrl, aadhaarUrl, paymentProofUrl] = await Promise.all([
+      saveFile(photoFile, 'player-photo'),
+      saveFile(aadhaarFile, 'aadhaar-photo'),
+      saveFile(paymentProofFile, 'payment-proof')
+    ]);
 
     await query(
       'INSERT INTO registrations (name, phone, playing_role, photo_url, aadhaar_url, payment_proof_url, status) VALUES ($1, $2, $3, $4, $5, $6, $7)',

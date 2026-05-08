@@ -17,8 +17,11 @@ const paymentParams = new URLSearchParams({
 const paymentUri = `upi://pay?${paymentParams.toString()}`;
 const paymentQrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=220x220&margin=10&data=${encodeURIComponent(paymentUri)}`;
 const uploadFileFields = ['photo', 'aadhaar', 'paymentProof'] as const;
-const maxUploadFileBytes = 1.2 * 1024 * 1024;
-const maxUploadImageEdge = 1400;
+type UploadField = (typeof uploadFileFields)[number];
+type PreparedUploads = Partial<Record<UploadField, File>>;
+const maxUploadFileBytes = 650 * 1024;
+const maxTotalUploadBytes = 2 * 1024 * 1024;
+const maxUploadImageEdge = 1000;
 
 function formatMb(bytes: number) {
   return `${(bytes / 1024 / 1024).toFixed(1)} MB`;
@@ -43,11 +46,11 @@ async function compressImage(file: File) {
   canvas.getContext('2d')?.drawImage(bitmap, 0, 0, width, height);
   bitmap.close();
 
-  let quality = 0.78;
+  let quality = 0.72;
   let blob = await new Promise<Blob | null>((resolve) => canvas.toBlob(resolve, 'image/jpeg', quality));
 
-  while (blob && blob.size > maxUploadFileBytes && quality > 0.5) {
-    quality -= 0.08;
+  while (blob && blob.size > maxUploadFileBytes && quality > 0.35) {
+    quality -= 0.07;
     blob = await new Promise<Blob | null>((resolve) => canvas.toBlob(resolve, 'image/jpeg', quality));
   }
 
@@ -63,23 +66,29 @@ async function compressImage(file: File) {
   return new File([blob], `${safeName}.jpg`, { type: 'image/jpeg' });
 }
 
-async function buildCompressedForm(form: HTMLFormElement) {
+async function buildCompressedForm(form: HTMLFormElement, preparedUploads: PreparedUploads = {}) {
   const source = new FormData(form);
   const compressed = new FormData();
+  let totalUploadBytes = 0;
 
   for (const [key, value] of source.entries()) {
     if (value instanceof File && isUploadField(key)) {
-      const file = await compressImage(value);
+      const file = preparedUploads[key] ?? await compressImage(value);
 
       if (file.size > maxUploadFileBytes) {
-        throw new Error(`${key} image is still ${formatMb(file.size)} after compression. Please upload a smaller or cropped image.`);
+        throw new Error(`${key} image is still ${formatMb(file.size)} after compression. Please crop it or choose a smaller image.`);
       }
 
       compressed.append(key, file);
+      totalUploadBytes += file.size;
       continue;
     }
 
     compressed.append(key, value);
+  }
+
+  if (totalUploadBytes > maxTotalUploadBytes) {
+    throw new Error('Uploaded images are still too large together. Please crop one or more images and try again.');
   }
 
   return compressed;
@@ -91,6 +100,8 @@ export default function RegisterPage() {
   const [message, setMessage] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [filePreviews, setFilePreviews] = useState<{ [key: string]: string }>({});
+  const [preparedUploads, setPreparedUploads] = useState<PreparedUploads>({});
+  const [compressingFiles, setCompressingFiles] = useState(0);
 
   async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -98,18 +109,19 @@ export default function RegisterPage() {
     setMessage(null);
     setLoading(true);
     try {
-      const form = await buildCompressedForm(event.currentTarget);
+      const form = await buildCompressedForm(event.currentTarget, preparedUploads);
       const response = await fetch('/api/register', { method: 'POST', body: form });
-      const result = await response.json();
+      const result = await response.json().catch(() => null);
 
       if (!response.ok) {
-        setError(result?.error || 'Unable to submit registration.');
+        setError(result?.error || 'Unable to submit registration. Please upload smaller images and try again.');
         return;
       }
 
       setMessage('Registration submitted! Admin will verify your payment soon.');
       formRef.current?.reset();
       setFilePreviews({});
+      setPreparedUploads({});
     } catch (submitError) {
       setError(submitError instanceof Error ? submitError.message : 'Unable to submit registration.');
     } finally {
@@ -117,10 +129,38 @@ export default function RegisterPage() {
     }
   }
 
-  function handleFileChange(e: React.ChangeEvent<HTMLInputElement>, key: string) {
+  async function handleFileChange(e: React.ChangeEvent<HTMLInputElement>, key: UploadField) {
     const file = e.target.files?.[0];
-    if (file) {
-      setFilePreviews((p) => ({ ...p, [key]: URL.createObjectURL(file) }));
+    if (!file) {
+      return;
+    }
+
+    setError(null);
+    setCompressingFiles((count) => count + 1);
+    try {
+      const compressedFile = await compressImage(file);
+
+      if (compressedFile.size > maxUploadFileBytes) {
+        throw new Error(`${key} image is ${formatMb(compressedFile.size)} after compression. Please crop it or choose a smaller image.`);
+      }
+
+      setPreparedUploads((uploads) => ({ ...uploads, [key]: compressedFile }));
+      setFilePreviews((previews) => ({ ...previews, [key]: URL.createObjectURL(compressedFile) }));
+    } catch (fileError) {
+      e.currentTarget.value = '';
+      setPreparedUploads((uploads) => {
+        const nextUploads = { ...uploads };
+        delete nextUploads[key];
+        return nextUploads;
+      });
+      setFilePreviews((previews) => {
+        const nextPreviews = { ...previews };
+        delete nextPreviews[key];
+        return nextPreviews;
+      });
+      setError(fileError instanceof Error ? fileError.message : 'Unable to prepare image. Please choose another image.');
+    } finally {
+      setCompressingFiles((count) => Math.max(0, count - 1));
     }
   }
 
@@ -914,13 +954,13 @@ export default function RegisterPage() {
                   {/* Payment proof */}
                   <div className="spl-upload-wrap" style={{ marginBottom: 0 }}>
                     <label className="spl-label" style={{ marginBottom: 6, display: 'block' }}>₹300 Payment Screenshot</label>
-                    <div className={`spl-upload-full ${filePreviews.payment ? 'active' : ''}`}>
+                    <div className={`spl-upload-full ${filePreviews.paymentProof ? 'active' : ''}`}>
                       <input
                         id="paymentProof" name="paymentProof" type="file" accept="image/*" required
-                        onChange={(e) => handleFileChange(e, 'payment')}
+                        onChange={(e) => handleFileChange(e, 'paymentProof')}
                       />
-                      {filePreviews.payment ? (
-                        <img src={filePreviews.payment} alt="Payment" className="spl-upload-full-preview" />
+                      {filePreviews.paymentProof ? (
+                        <img src={filePreviews.paymentProof} alt="Payment" className="spl-upload-full-preview" />
                       ) : (
                         <div className="spl-upload-full-inner">
                           <span className="spl-upload-full-emoji">💳</span>
@@ -944,8 +984,8 @@ export default function RegisterPage() {
                     </div>
                   )}
 
-                  <button type="submit" disabled={loading} className="spl-submit">
-                    {loading ? 'Submitting...' : '🏏  Submit & Join the League'}
+                  <button type="submit" disabled={loading || compressingFiles > 0} className="spl-submit">
+                    {compressingFiles > 0 ? 'Preparing images...' : loading ? 'Submitting...' : '🏏  Submit & Join the League'}
                   </button>
 
                   <p className="spl-form-footer">
