@@ -5,6 +5,8 @@ import { saveFile } from '@/lib/storage';
 export const runtime = 'nodejs';
 
 const playingRoles = ['All rounder', 'Batter', 'Bowler'] as const;
+const maxUploadFileBytes = 1.2 * 1024 * 1024;
+const maxTotalUploadBytes = 4 * 1024 * 1024;
 
 async function requiredString(value: FormDataEntryValue | null, label: string) {
   if (!value || typeof value !== 'string' || !value.trim()) {
@@ -19,6 +21,14 @@ async function requiredFile(value: FormDataEntryValue | null, label: string) {
     throw new Error(`${label} file is required.`);
   }
 
+  if (!value.type.startsWith('image/')) {
+    throw new Error(`${label} must be an image file.`);
+  }
+
+  if (value.size > maxUploadFileBytes) {
+    throw new Error(`${label} is too large. Please upload an image under 1.2 MB.`);
+  }
+
   return value as File;
 }
 
@@ -31,6 +41,11 @@ export async function POST(request: Request) {
     const photoFile = await requiredFile(formData.get('photo'), 'Player photo');
     const aadhaarFile = await requiredFile(formData.get('aadhaar'), 'Aadhaar photo');
     const paymentProofFile = await requiredFile(formData.get('paymentProof'), 'Payment proof');
+    const totalUploadBytes = photoFile.size + aadhaarFile.size + paymentProofFile.size;
+
+    if (totalUploadBytes > maxTotalUploadBytes) {
+      throw new Error('Uploaded images are too large together. Please use smaller or cropped images.');
+    }
 
     if (!playingRoles.includes(playingRole as (typeof playingRoles)[number])) {
       throw new Error('Please select a valid playing role.');

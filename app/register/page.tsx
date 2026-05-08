@@ -15,6 +15,74 @@ const paymentParams = new URLSearchParams({
 });
 const paymentUri = `upi://pay?${paymentParams.toString()}`;
 const paymentQrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=220x220&margin=10&data=${encodeURIComponent(paymentUri)}`;
+const uploadFileFields = ['photo', 'aadhaar', 'paymentProof'] as const;
+const maxUploadFileBytes = 1.2 * 1024 * 1024;
+const maxUploadImageEdge = 1400;
+
+function formatMb(bytes: number) {
+  return `${(bytes / 1024 / 1024).toFixed(1)} MB`;
+}
+
+function isUploadField(name: string): name is (typeof uploadFileFields)[number] {
+  return uploadFileFields.includes(name as (typeof uploadFileFields)[number]);
+}
+
+async function compressImage(file: File) {
+  if (!file.type.startsWith('image/')) {
+    return file;
+  }
+
+  const bitmap = await createImageBitmap(file);
+  const scale = Math.min(1, maxUploadImageEdge / Math.max(bitmap.width, bitmap.height));
+  const width = Math.max(1, Math.round(bitmap.width * scale));
+  const height = Math.max(1, Math.round(bitmap.height * scale));
+  const canvas = document.createElement('canvas');
+  canvas.width = width;
+  canvas.height = height;
+  canvas.getContext('2d')?.drawImage(bitmap, 0, 0, width, height);
+  bitmap.close();
+
+  let quality = 0.78;
+  let blob = await new Promise<Blob | null>((resolve) => canvas.toBlob(resolve, 'image/jpeg', quality));
+
+  while (blob && blob.size > maxUploadFileBytes && quality > 0.5) {
+    quality -= 0.08;
+    blob = await new Promise<Blob | null>((resolve) => canvas.toBlob(resolve, 'image/jpeg', quality));
+  }
+
+  if (!blob) {
+    return file;
+  }
+
+  if (blob.size >= file.size && file.size <= maxUploadFileBytes) {
+    return file;
+  }
+
+  const safeName = file.name.replace(/\.[^.]+$/, '') || 'upload';
+  return new File([blob], `${safeName}.jpg`, { type: 'image/jpeg' });
+}
+
+async function buildCompressedForm(form: HTMLFormElement) {
+  const source = new FormData(form);
+  const compressed = new FormData();
+
+  for (const [key, value] of source.entries()) {
+    if (value instanceof File && isUploadField(key)) {
+      const file = await compressImage(value);
+
+      if (file.size > maxUploadFileBytes) {
+        throw new Error(`${key} image is still ${formatMb(file.size)} after compression. Please upload a smaller or cropped image.`);
+      }
+
+      compressed.append(key, file);
+      continue;
+    }
+
+    compressed.append(key, value);
+  }
+
+  return compressed;
+}
 
 export default function RegisterPage() {
   const formRef = useRef<HTMLFormElement>(null);
@@ -28,23 +96,27 @@ export default function RegisterPage() {
     setMessage(null);
     setLoading(true);
 
-    const form = new FormData(event.currentTarget);
+    try {
+      const form = await buildCompressedForm(event.currentTarget);
+      const response = await fetch('/api/register', {
+        method: 'POST',
+        body: form
+      });
 
-    const response = await fetch('/api/register', {
-      method: 'POST',
-      body: form
-    });
+      const result = await response.json();
 
-    const result = await response.json();
-    setLoading(false);
+      if (!response.ok) {
+        setError(result?.error || 'Unable to submit registration.');
+        return;
+      }
 
-    if (!response.ok) {
-      setError(result?.error || 'Unable to submit registration.');
-      return;
+      setMessage('Registration submitted successfully. Admin will verify payment soon.');
+      formRef.current?.reset();
+    } catch (submitError) {
+      setError(submitError instanceof Error ? submitError.message : 'Unable to submit registration.');
+    } finally {
+      setLoading(false);
     }
-
-    setMessage('Registration submitted successfully. Admin will verify payment soon.');
-    formRef.current?.reset();
   }
 
   return (

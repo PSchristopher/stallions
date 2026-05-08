@@ -5,3 +5,4 @@ out
 public/uploads
 .DS_Store
 .env
+*.log
