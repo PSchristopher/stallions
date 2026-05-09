@@ -13,8 +13,9 @@ const paymentParams = new URLSearchParams({
   am: paymentAmount,
   cu: 'INR',
 });
-const paymentUri = `upi://pay?${paymentParams.toString()}`;
-const paymentQrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=220x220&margin=10&data=${encodeURIComponent(paymentUri)}`;
+const paymentUri = `upi://pay?pa=${paymentUpiId}&pn=${paymentPayee}&cu=INR&tn=SPL+Registration`;
+const qrUri = `upi://pay?pa=${paymentUpiId}&pn=${paymentPayee}&am=${paymentAmount}&cu=INR&tn=SPL+Registration`;
+const paymentQrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=220x220&margin=10&data=${encodeURIComponent(qrUri)}`;
 const uploadFileFields = ['photo', 'aadhaar', 'paymentProof'] as const;
 type UploadField = (typeof uploadFileFields)[number];
 type PreparedUploads = Partial<Record<UploadField, File>>;
@@ -203,7 +204,7 @@ export default function RegisterPage() {
             <p className="page-subtitle" style={{ marginBottom: 14 }}>
               Contact: <a href="tel:+917012225381">{paymentPhone}</a>
             </p>
-            <a href={paymentUri}>Pay ₹{paymentDisplayAmount} with UPI</a>
+            <a href={paymentUri}>Pay with UPI App (Enter ₹{paymentDisplayAmount})</a>
           </div>
         </div>
 

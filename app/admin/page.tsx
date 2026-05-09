@@ -870,19 +870,19 @@ export default function AdminPage() {
           left: 12px;
           top: 34px;
           transform: rotate(-18deg);
-          animation: slipTumbleOne 0.62s ease-in-out 0s 7;
+          animation: slipTumbleOne 5s ease-in-out forwards;
         }
         .paper-slip.two {
           left: 54px;
           top: 66px;
           transform: rotate(16deg);
-          animation: slipTumbleTwo 0.7s ease-in-out 0s 6;
+          animation: slipTumbleTwo 5s ease-in-out forwards;
         }
         .paper-slip.three {
           left: 35px;
           top: 102px;
           transform: rotate(-6deg);
-          animation: slipTumbleThree 0.76s ease-in-out 0s 6;
+          animation: slipTumbleThree 5s ease-in-out forwards;
         }
         .lot-hand {
           position: absolute;
@@ -927,46 +927,67 @@ export default function AdminPage() {
           height: 22px;
           border-radius: 999px 16px 16px 999px;
           background: linear-gradient(135deg, #f3c39a, #d48850);
+          transform-origin: left center;
           transform: rotate(13deg);
-          z-index: 10;
+          z-index: 11;
           box-shadow: 0 8px 14px rgba(83,47,24,0.12);
+          animation: thumbGrip 5s ease-in-out forwards;
         }
         .hand-finger {
           position: absolute;
           height: 20px;
           border-radius: 999px 12px 12px 999px;
           background: linear-gradient(135deg, #efba8c, #c87a47);
-          z-index: 9;
         }
         .hand-finger.one {
           left: 4px;
           top: 28px;
           width: 98px;
+          transform-origin: left center;
           transform: rotate(-7deg);
           background: linear-gradient(135deg, #f4c79e, #d98f57);
           box-shadow: 0 8px 14px rgba(83,47,24,0.1);
+          z-index: 9;
+          animation: fingerGrip 5s ease-in-out forwards;
         }
         .hand-finger.two {
-          display: none;
+          display: block;
+          left: 16px;
+          top: 14px;
+          width: 90px;
+          transform-origin: left center;
+          transform: rotate(-10deg);
+          background: linear-gradient(135deg, #e8b080, #c4723c);
+          z-index: 8;
+          animation: fingerGripTwo 5s ease-in-out forwards;
         }
         .hand-finger.three {
-          display: none;
+          display: block;
+          left: 26px;
+          top: 2px;
+          width: 80px;
+          transform-origin: left center;
+          transform: rotate(-13deg);
+          background: linear-gradient(135deg, #d89c68, #b05e26);
+          z-index: 7;
+          animation: fingerGripThree 5s ease-in-out forwards;
         }
         .paper-picked {
           position: absolute;
-          top: 62px;
-          right: 126px;
-          width: 90px;
-          height: 32px;
+          left: 12px;
+          top: 28px;
+          width: 70px;
+          height: 28px;
           border-radius: 7px 11px 7px 11px;
           border: 1px solid #e4b441;
           background:
             linear-gradient(90deg, transparent 48%, rgba(220,170,50,0.18) 50%, transparent 52%),
             linear-gradient(135deg, #fff8db, #fff);
           box-shadow: 0 14px 28px rgba(232,165,0,0.2);
-          animation: paperPickWithHand 5s ease-in-out forwards;
-          transform-origin: right center;
-          z-index: 8;
+          z-index: 10;
+          opacity: 0;
+          animation: paperAppear 5s ease-in-out forwards;
+          transform: rotate(-5deg);
         }
         .paper-picked::before,
         .paper-picked::after {
@@ -978,8 +999,8 @@ export default function AdminPage() {
           background: #d8a11b;
           opacity: 0.42;
         }
-        .paper-picked::before { top: 10px; }
-        .paper-picked::after { top: 18px; }
+        .paper-picked::before { top: 8px; }
+        .paper-picked::after { top: 16px; }
         .lot-shadow {
           position: absolute;
           bottom: 8px;
@@ -1004,36 +1025,65 @@ export default function AdminPage() {
           color: var(--muted);
         }
         @keyframes bottleDrawShake {
-          0%, 12%, 24%, 36%, 48%, 60% { transform: rotate(-8deg) translateY(0); }
-          6%, 18%, 30%, 42%, 54% { transform: rotate(9deg) translateY(-5px); }
-          68% { transform: rotate(-3deg) translateY(0); }
-          78%, 100% { transform: rotate(0deg) translateY(0); }
+          0% { transform: rotate(0) translateY(0); }
+          10%, 30%, 50% { transform: rotate(-10deg) translateY(-8px); }
+          20%, 40% { transform: rotate(12deg) translateY(2px); }
+          60%, 100% { transform: rotate(0deg) translateY(0); }
         }
         @keyframes slipTumbleOne {
-          0%, 100% { transform: translate(0, 0) rotate(-18deg); }
-          50% { transform: translate(12px, 12px) rotate(24deg); }
+          0%, 60% { transform: translate(0, 0) rotate(-18deg); }
+          10% { transform: translate(12px, -15px) rotate(45deg); }
+          20% { transform: translate(-5px, 20px) rotate(-30deg); }
+          30% { transform: translate(18px, -5px) rotate(60deg); }
+          40% { transform: translate(-10px, 15px) rotate(-15deg); }
+          50% { transform: translate(8px, -10px) rotate(25deg); }
+          60%, 100% { transform: translate(0, 0) rotate(-18deg); }
         }
         @keyframes slipTumbleTwo {
-          0%, 100% { transform: translate(0, 0) rotate(16deg); }
-          50% { transform: translate(-18px, -10px) rotate(-22deg); }
+          0%, 60% { transform: translate(0, 0) rotate(16deg); }
+          10% { transform: translate(-15px, 20px) rotate(-40deg); }
+          20% { transform: translate(10px, -15px) rotate(35deg); }
+          30% { transform: translate(-20px, 10px) rotate(-50deg); }
+          40% { transform: translate(15px, -20px) rotate(20deg); }
+          50% { transform: translate(-8px, 12px) rotate(-10deg); }
+          60%, 100% { transform: translate(0, 0) rotate(16deg); }
         }
         @keyframes slipTumbleThree {
-          0%, 100% { transform: translate(0, 0) rotate(-6deg); }
-          50% { transform: translate(16px, -10px) rotate(20deg); }
+          0%, 60% { transform: translate(0, 0) rotate(-6deg); }
+          10% { transform: translate(10px, -10px) rotate(30deg); }
+          20% { transform: translate(-15px, 15px) rotate(-20deg); }
+          30% { transform: translate(20px, 5px) rotate(45deg); }
+          40% { transform: translate(-10px, -15px) rotate(-35deg); }
+          50% { transform: translate(5px, 20px) rotate(15deg); }
+          60%, 100% { transform: translate(0, 0) rotate(-6deg); }
         }
         @keyframes handReachPick {
-          0%, 56% { transform: translate(0, 0) rotate(0deg); opacity: 0; }
-          62% { opacity: 1; }
-          74% { transform: translate(-92px, -4px) rotate(-4deg); opacity: 1; }
-          84% { transform: translate(-116px, -2px) rotate(-7deg); opacity: 1; }
-          100% { transform: translate(-50px, -26px) rotate(2deg); opacity: 1; }
+          0%, 55% { transform: translate(50px, 0) rotate(0deg); opacity: 0; }
+          60% { transform: translate(50px, 0) rotate(0deg); opacity: 1; }
+          75% { transform: translate(-100px, -35px) rotate(-10deg); opacity: 1; }
+          82% { transform: translate(-100px, -35px) rotate(-10deg); opacity: 1; }
+          100% { transform: translate(20px, -50px) rotate(5deg); opacity: 1; }
         }
-        @keyframes paperPickWithHand {
-          0%, 58% { transform: translate(-64px, 58px) rotate(-12deg) scale(0.72); opacity: 0; }
-          63% { opacity: 1; }
-          74% { transform: translate(-32px, 12px) rotate(-6deg) scale(0.92); opacity: 1; }
-          84% { transform: translate(0, -2px) rotate(3deg) scale(1); opacity: 1; }
-          100% { transform: translate(70px, -40px) rotate(9deg) scale(1.04); opacity: 1; }
+        @keyframes thumbGrip {
+          0%, 75% { transform: rotate(25deg); }
+          80%, 100% { transform: rotate(10deg); }
+        }
+        @keyframes fingerGrip {
+          0%, 75% { transform: rotate(-20deg); }
+          80%, 100% { transform: rotate(-5deg); }
+        }
+        @keyframes fingerGripTwo {
+          0%, 75% { transform: rotate(-25deg); }
+          80%, 100% { transform: rotate(-10deg); }
+        }
+        @keyframes fingerGripThree {
+          0%, 75% { transform: rotate(-30deg); }
+          80%, 100% { transform: rotate(-13deg); }
+        }
+        @keyframes paperAppear {
+          0%, 74% { opacity: 0; }
+          75% { opacity: 1; transform: translateY(15px) rotate(-5deg); }
+          80%, 100% { opacity: 1; transform: translateY(0) rotate(-5deg); }
         }
         @keyframes shadowPulse {
           0%, 60% { transform: scaleX(1.08); opacity: 0.2; }
@@ -1412,8 +1462,8 @@ export default function AdminPage() {
                                 <span className="hand-finger one" />
                                 <span className="hand-finger two" />
                                 <span className="hand-finger three" />
+                                <div className="paper-picked" />
                               </div>
-                              <div className="paper-picked" />
                             </div>
                             <div>
                               <div className="lot-loading-title">Picking Player</div>
