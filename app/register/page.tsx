@@ -7,8 +7,9 @@ const paymentPhone = '+91 70122 25381';
 const paymentAmount = '300.00';
 const paymentDisplayAmount = '300';
 const paymentPayee = 'Jerinvijay';
-const paymentUri = `upi://pay?pa=${paymentUpiId}&pn=${paymentPayee}&am=${paymentAmount}&cu=INR&tn=SPL+Registration`;
-const paymentIntentUri = `intent://pay?pa=${paymentUpiId}&pn=${paymentPayee}&am=${paymentAmount}&cu=INR&tn=SPL+Registration#Intent;scheme=upi;action=android.intent.action.VIEW;end`;
+const paymentTxnRef = 'SPL_STALLIONS_REG';
+const paymentUri = `upi://pay?pa=${paymentUpiId}&pn=${paymentPayee}&am=${paymentAmount}&cu=INR&tn=SPL+Registration&tr=${paymentTxnRef}`;
+const paymentIntentUri = `intent://pay?pa=${paymentUpiId}&pn=${paymentPayee}&am=${paymentAmount}&cu=INR&tn=SPL+Registration&tr=${paymentTxnRef}#Intent;scheme=upi;action=android.intent.action.VIEW;category=android.intent.category.BROWSABLE;end`;
 const paymentQrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=220x220&margin=10&data=${encodeURIComponent(paymentUri)}`;
 const uploadFileFields = ['photo', 'aadhaar', 'paymentProof'] as const;
 type UploadField = (typeof uploadFileFields)[number];
@@ -244,7 +245,7 @@ export default function RegisterPage() {
               Pay Now
             </button>
             <p className="page-subtitle" style={{ color: '#facc15', marginTop: 4 }}>
-              If the UPI app shows a bank limit or fraud block, try another UPI app/account or use the manual details above.
+              This uses an Android UPI intent if available. If the payment app still blocks the transaction, that is a bank/app restriction and cannot be bypassed from the website.
             </p>
           </div>
         </div>
