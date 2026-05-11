@@ -8,6 +8,7 @@ const paymentAmount = '300.00';
 const paymentDisplayAmount = '300';
 const paymentPayee = 'Jerinvijay';
 const paymentUri = `upi://pay?pa=${paymentUpiId}&pn=${paymentPayee}&am=${paymentAmount}&cu=INR&tn=SPL+Registration`;
+const paymentIntentUri = `intent://pay?pa=${paymentUpiId}&pn=${paymentPayee}&am=${paymentAmount}&cu=INR&tn=SPL+Registration#Intent;scheme=upi;action=android.intent.action.VIEW;end`;
 const paymentQrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=220x220&margin=10&data=${encodeURIComponent(paymentUri)}`;
 const uploadFileFields = ['photo', 'aadhaar', 'paymentProof'] as const;
 type UploadField = (typeof uploadFileFields)[number];
@@ -125,10 +126,19 @@ export default function RegisterPage() {
     }
   }
 
-  function handlePayNowClick() {
-    if (typeof window !== 'undefined') {
-      window.location.href = paymentUri;
+  function openUpiDeepLink() {
+    if (typeof window === 'undefined') {
+      return;
     }
+
+    const userAgent = navigator.userAgent || '';
+    const isAndroidChrome = /Android/.test(userAgent) && /Chrome\//.test(userAgent);
+    const targetLink = isAndroidChrome ? paymentIntentUri : paymentUri;
+    window.location.assign(targetLink);
+  }
+
+  function handlePayNowClick() {
+    openUpiDeepLink();
   }
 
   async function handleFileChange(e: React.ChangeEvent<HTMLInputElement>, key: UploadField) {
@@ -192,9 +202,12 @@ export default function RegisterPage() {
           <a
             href={paymentUri}
             target="_self"
-            rel="noreferrer"
             aria-label="Open UPI app for SPL registration payment"
             style={{ display: 'block' }}
+            onClick={(event) => {
+              event.preventDefault();
+              openUpiDeepLink();
+            }}
           >
             <img
               src={paymentQrUrl}
@@ -231,7 +244,7 @@ export default function RegisterPage() {
               Pay Now
             </button>
             <p className="page-subtitle" style={{ color: '#facc15', marginTop: 4 }}>
-              If automatic opening fails, use the UPI details above in your app.
+              If the UPI app shows a bank limit or fraud block, try another UPI app/account or use the manual details above.
             </p>
           </div>
         </div>
