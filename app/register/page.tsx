@@ -7,8 +7,8 @@ const paymentPhone = '+91 70122 25381';
 const paymentAmount = '300.00';
 const paymentDisplayAmount = '300';
 const paymentPayee = 'Jerinvijay';
-const qrUri = `upi://pay?pa=${paymentUpiId}&pn=${paymentPayee}&am=${paymentAmount}&cu=INR&tn=SPL+Registration`;
-const paymentQrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=220x220&margin=10&data=${encodeURIComponent(qrUri)}`;
+const paymentUri = `upi://pay?pa=${paymentUpiId}&pn=${paymentPayee}&am=${paymentAmount}&cu=INR&tn=SPL+Registration`;
+const paymentQrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=220x220&margin=10&data=${encodeURIComponent(paymentUri)}`;
 const uploadFileFields = ['photo', 'aadhaar', 'paymentProof'] as const;
 type UploadField = (typeof uploadFileFields)[number];
 type PreparedUploads = Partial<Record<UploadField, File>>;
@@ -125,6 +125,12 @@ export default function RegisterPage() {
     }
   }
 
+  function handlePayNowClick() {
+    if (typeof window !== 'undefined') {
+      window.location.href = paymentUri;
+    }
+  }
+
   async function handleFileChange(e: React.ChangeEvent<HTMLInputElement>, key: UploadField) {
     const file = e.target.files?.[0];
     if (!file) {
@@ -183,16 +189,22 @@ export default function RegisterPage() {
             background: 'rgba(255,255,255,0.06)'
           }}
         >
-          <div>
+          <a
+            href={paymentUri}
+            target="_self"
+            rel="noreferrer"
+            aria-label="Open UPI app for SPL registration payment"
+            style={{ display: 'block' }}
+          >
             <img
               src={paymentQrUrl}
               alt="UPI QR code for SPL registration fee"
               style={{ width: '100%', display: 'block', borderRadius: 8, background: '#fff', padding: 8 }}
             />
-          </div>
+          </a>
           <div>
             <p className="page-subtitle" style={{ marginBottom: 10 }}>
-              Use your UPI app to pay <strong>₹{paymentDisplayAmount}</strong>.
+              Tap the QR image or click Pay Now to open your UPI app and pay <strong>₹{paymentDisplayAmount}</strong>.
             </p>
             <p className="page-subtitle" style={{ marginBottom: 8 }}>
               UPI ID: <strong>{paymentUpiId}</strong>
@@ -200,8 +212,26 @@ export default function RegisterPage() {
             <p className="page-subtitle" style={{ marginBottom: 14 }}>
               Phone: <strong>{paymentPhone}</strong>
             </p>
+            <button
+              type="button"
+              onClick={handlePayNowClick}
+              style={{
+                display: 'inline-flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                padding: '10px 16px',
+                borderRadius: 8,
+                border: '1px solid rgba(255,255,255,0.16)',
+                background: '#0f172a',
+                color: '#ffffff',
+                cursor: 'pointer',
+                marginBottom: 12,
+              }}
+            >
+              Pay Now
+            </button>
             <p className="page-subtitle" style={{ color: '#facc15', marginTop: 4 }}>
-              Copy these details manually into your UPI app. Do not use an automatic redirect link.
+              If automatic opening fails, use the UPI details above in your app.
             </p>
           </div>
         </div>
