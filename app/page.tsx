@@ -375,11 +375,12 @@ export default function RegisterPage() {
         }
         .spl-payment-body {
           padding: 18px;
-          display: grid;
           grid-template-columns: 132px 1fr;
           gap: 16px;
           align-items: center;
         }
+          // display: grid;
+
         .spl-payment-qr-link {
           display: block;
           border: 1px solid var(--border);
@@ -806,9 +807,9 @@ export default function RegisterPage() {
                   </span>
                 </div>
                 <div className="spl-payment-body">
-                  <a className="spl-payment-qr-link" href={paymentUri} aria-label="Pay SPL registration fee using UPI">
+                  {/* <a className="spl-payment-qr-link" href={paymentUri} aria-label="Pay SPL registration fee using UPI">
                     <img className="spl-payment-qr" src={paymentQrUrl} alt="UPI QR code for SPL registration fee" />
-                  </a>
+                  </a> */}
                   <div>
                     <div className="spl-payment-line">
                       <span>UPI ID</span>
@@ -823,7 +824,7 @@ export default function RegisterPage() {
                       <strong>₹{paymentDisplayAmount}</strong>
                     </div>
                     <div className="spl-payment-actions">
-                      <a className="spl-pay-button" href={paymentUri}>Pay Now</a>
+                      {/* <a className="spl-pay-button" href={paymentUri}>Pay Now</a> */}
                       <a className="spl-contact-button" href="tel:+917012225381">Call</a>
                     </div>
                     <p className="spl-payment-note">

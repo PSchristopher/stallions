@@ -7,13 +7,6 @@ const paymentPhone = '+91 70122 25381';
 const paymentAmount = '300.00';
 const paymentDisplayAmount = '300';
 const paymentPayee = 'Jerinvijay';
-const paymentParams = new URLSearchParams({
-  pa: paymentUpiId,
-  pn: paymentPayee,
-  am: paymentAmount,
-  cu: 'INR',
-});
-const paymentUri = `upi://pay?pa=${paymentUpiId}&pn=${paymentPayee}&cu=INR&tn=SPL+Registration`;
 const qrUri = `upi://pay?pa=${paymentUpiId}&pn=${paymentPayee}&am=${paymentAmount}&cu=INR&tn=SPL+Registration`;
 const paymentQrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=220x220&margin=10&data=${encodeURIComponent(qrUri)}`;
 const uploadFileFields = ['photo', 'aadhaar', 'paymentProof'] as const;
@@ -190,21 +183,26 @@ export default function RegisterPage() {
             background: 'rgba(255,255,255,0.06)'
           }}
         >
-          <a href={paymentUri} aria-label="Pay SPL registration fee using UPI">
+          <div>
             <img
               src={paymentQrUrl}
               alt="UPI QR code for SPL registration fee"
               style={{ width: '100%', display: 'block', borderRadius: 8, background: '#fff', padding: 8 }}
             />
-          </a>
+          </div>
           <div>
             <p className="page-subtitle" style={{ marginBottom: 10 }}>
-              Pay <strong>₹{paymentDisplayAmount}</strong> to <strong>{paymentUpiId}</strong>
+              Use your UPI app to pay <strong>₹{paymentDisplayAmount}</strong>.
+            </p>
+            <p className="page-subtitle" style={{ marginBottom: 8 }}>
+              UPI ID: <strong>{paymentUpiId}</strong>
             </p>
             <p className="page-subtitle" style={{ marginBottom: 14 }}>
-              Contact: <a href="tel:+917012225381">{paymentPhone}</a>
+              Phone: <strong>{paymentPhone}</strong>
             </p>
-            <a href={paymentUri}>Pay with UPI App (Enter ₹{paymentDisplayAmount})</a>
+            <p className="page-subtitle" style={{ color: '#facc15', marginTop: 4 }}>
+              Copy these details manually into your UPI app. Do not use an automatic redirect link.
+            </p>
           </div>
         </div>
 
