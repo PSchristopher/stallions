@@ -4,6 +4,7 @@ import { useState } from 'react';
 
 type Registration = {
   id: number;
+  displayNumber: number;
   name: string;
   phone: string;
   playingRole: string;
@@ -13,6 +14,10 @@ type Registration = {
   paymentProofUrl: string;
   createdAt: string;
 };
+
+function formatDisplayNumber(value: number) {
+  return `#${String(value).padStart(3, '0')}`;
+}
 
 export default function SearchPage() {
   const [query, setQuery] = useState('');
@@ -76,6 +81,7 @@ export default function SearchPage() {
               <img src={item.photoUrl} alt={`${item.name} photo`} />
               <div>
                 <h2>{item.name}</h2>
+                <p><strong>Display No:</strong> {formatDisplayNumber(item.displayNumber)}</p>
                 <p><strong>Phone:</strong> {item.phone}</p>
                 <p><strong>Playing Role:</strong> {item.playingRole}</p>
                 <p><strong>Status:</strong> <span className={`status-badge ${item.status === 'verified' ? 'status-verified' : 'status-pending'}`}>{item.status}</span></p>

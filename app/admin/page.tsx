@@ -9,6 +9,7 @@ type PlayerFilter = 'all' | 'pending' | 'approved' | 'sold' | 'unsold';
 
 type Registration = {
   id: number;
+  displayNumber: number;
   name: string;
   phone: string;
   playingRole: string;
@@ -38,6 +39,10 @@ function getStatusClass(status: RegistrationStatus) {
   if (status === 'sold') return 'status-sold';
   if (status === 'unsold' || status === 'rejected') return 'status-unsold';
   return 'status-pending';
+}
+
+function formatDisplayNumber(value: number) {
+  return `#${String(value).padStart(3, '0')}`;
 }
 
 function isApprovedForLot(status: RegistrationStatus) {
@@ -173,6 +178,14 @@ export default function AdminPage() {
 
   function openImage(url: string, title: string) {
     setImagePreview({ url, title });
+  }
+
+  function exportApprovedPlayers() {
+    window.location.href = '/api/admin/export';
+  }
+
+  function exportApprovedPlayersPdf() {
+    window.open('/api/admin/export/pdf', '_blank', 'noopener,noreferrer');
   }
 
   function startLot() {
@@ -518,6 +531,31 @@ export default function AdminPage() {
         }
         .tab-btn.active { background: var(--blue); color: #fff; }
 
+        .export-btn {
+          display: inline-flex;
+          align-items: center;
+          justify-content: center;
+          gap: 8px;
+          min-height: 38px;
+          padding: 8px 14px;
+          border-radius: 8px;
+          border: 1px solid #2e74e0;
+          background: #e8a500;
+          color: #0b1f3a;
+          font-family: 'Barlow Condensed', sans-serif;
+          font-size: 13px;
+          font-weight: 700;
+          letter-spacing: 1px;
+          text-transform: uppercase;
+          cursor: pointer;
+          white-space: nowrap;
+          box-shadow: 0 10px 22px rgba(232, 165, 0, 0.18);
+        }
+        .export-btn:hover {
+          background: #f4ba22;
+          transform: translateY(-1px);
+        }
+
         .player-grid {
           display: grid;
           grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
@@ -542,6 +580,21 @@ export default function AdminPage() {
           border: 2px solid var(--sky);
         }
         .p-info { flex: 1; }
+        .display-pill {
+          display: inline-flex;
+          align-items: center;
+          justify-content: center;
+          min-width: 48px;
+          padding: 4px 8px;
+          border-radius: 6px;
+          background: #e8f1fc;
+          color: #1a5fc8;
+          font-family: 'Barlow Condensed', sans-serif;
+          font-size: 13px;
+          font-weight: 700;
+          letter-spacing: 1px;
+          margin-bottom: 6px;
+        }
         .p-name {
           font-family: 'Bebas Neue', sans-serif;
           font-size: 20px;
@@ -1315,6 +1368,22 @@ export default function AdminPage() {
                             All
                           </button>
                         </div>
+                        <button
+                          type="button"
+                          className="export-btn"
+                          onClick={exportApprovedPlayers}
+                          disabled={approvedCount === 0}
+                        >
+                          Export Excel
+                        </button>
+                        <button
+                          type="button"
+                          className="export-btn"
+                          onClick={exportApprovedPlayersPdf}
+                          disabled={approvedCount === 0}
+                        >
+                          Export PDF
+                        </button>
                       </div>
                     </div>
 
@@ -1338,13 +1407,16 @@ export default function AdminPage() {
                                   className="p-img"
                                   alt={`${registration.name} profile`}
                                 />
-                                  <div className="p-info">
-                                    <div className="p-name">{registration.name}</div>
-                                    <div className="p-phone">{registration.phone}</div>
-                                    <div className="p-phone">{registration.playingRole}</div>
-                                    <span className={`status-badge ${getStatusClass(registration.status)}`}>
-                                      {getStatusLabel(registration.status)}
-                                    </span>
+                                <div className="p-info">
+                                  <span className="display-pill">
+                                    {formatDisplayNumber(registration.displayNumber)}
+                                  </span>
+                                  <div className="p-name">{registration.name}</div>
+                                  <div className="p-phone">{registration.phone}</div>
+                                  <div className="p-phone">{registration.playingRole}</div>
+                                  <span className={`status-badge ${getStatusClass(registration.status)}`}>
+                                    {getStatusLabel(registration.status)}
+                                  </span>
                                 </div>
                               </div>
                             </div>
@@ -1407,6 +1479,9 @@ export default function AdminPage() {
                               style={{ fontSize: 34, textAlign: 'center', marginBottom: 8 }}
                             >
                               {lotPlayer.name}
+                            </div>
+                            <div className="p-phone" style={{ textAlign: 'center', marginBottom: 8 }}>
+                              {formatDisplayNumber(lotPlayer.displayNumber)}
                             </div>
                             <div className="p-phone" style={{ textAlign: 'center', marginBottom: 8 }}>
                               {lotPlayer.phone}
@@ -1522,6 +1597,7 @@ export default function AdminPage() {
                     <h2 className="p-name" style={{ fontSize: '32px' }}>
                       {selectedReg.name}
                     </h2>
+                    <p className="p-phone">Display No: {formatDisplayNumber(selectedReg.displayNumber)}</p>
                     <p className="p-phone">{selectedReg.phone}</p>
                     <p className="p-phone">Role: {selectedReg.playingRole}</p>
                     <p className="p-phone">

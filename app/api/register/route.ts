@@ -62,12 +62,15 @@ export async function POST(request: Request) {
       saveFile(paymentProofFile, 'payment-proof')
     ]);
 
-    await query(
-      'INSERT INTO registrations (name, phone, playing_role, photo_url, aadhaar_url, payment_proof_url, status) VALUES ($1, $2, $3, $4, $5, $6, $7)',
+    const inserted = await query(
+      'INSERT INTO registrations (name, phone, playing_role, photo_url, aadhaar_url, payment_proof_url, status) VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING display_number AS "displayNumber"',
       [name, phone, playingRole, photoUrl, aadhaarUrl, paymentProofUrl, 'pending']
     );
 
-    return NextResponse.json({ success: true }, { status: 201 });
+    return NextResponse.json(
+      { success: true, displayNumber: inserted.rows[0]?.displayNumber },
+      { status: 201 }
+    );
   } catch (error) {
     const message = error instanceof Error ? error.message : 'Unknown error';
     console.error('[Register API Error]', message, error);
