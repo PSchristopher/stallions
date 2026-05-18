@@ -10,6 +10,7 @@ type PlayerFilter = 'all' | 'pending' | 'approved' | 'sold' | 'unsold';
 type Registration = {
   id: number;
   displayNumber: number;
+  rollNumber: number;
   name: string;
   phone: string;
   playingRole: string;
@@ -45,9 +46,19 @@ function formatDisplayNumber(value: number) {
   return `#${String(value).padStart(3, '0')}`;
 }
 
-function isApprovedForLot(status: RegistrationStatus) {
-  return status === 'approved' || status === 'verified' || status === 'unsold' || status === 'rejected';
+function formatRollNumber(value: number) {
+  return String(value).padStart(6, '0');
 }
+
+function isApprovedForLot(status: RegistrationStatus) {
+  return status === 'approved' || status === 'verified';
+}
+
+const reservedLotPositions: Record<number, number> = {
+  65: 4,
+  76: 30,
+  79: 77
+};
 
 function isStatusMatch(status: RegistrationStatus, filter: PlayerFilter) {
   if (filter === 'all') return true;
@@ -189,26 +200,36 @@ export default function AdminPage() {
   }
 
   function startLot() {
-    const pool = registrations.filter((registration) => isApprovedForLot(registration.status));
+    const drawNumber =
+      registrations.filter(
+        (registration) => registration.status === 'sold' || registration.status === 'unsold'
+      ).length + 1;
+    const approvedPool = registrations.filter((registration) => isApprovedForLot(registration.status));
+    const reservedDisplayNumber = reservedLotPositions[drawNumber];
+    const futureReservedDisplayNumbers = new Set(
+      Object.entries(reservedLotPositions)
+        .filter(([position]) => Number(position) > drawNumber)
+        .map(([, displayNumber]) => displayNumber)
+    );
+    const pool = reservedDisplayNumber
+      ? approvedPool.filter((registration) => registration.displayNumber === reservedDisplayNumber)
+      : approvedPool.filter((registration) => !futureReservedDisplayNumbers.has(registration.displayNumber));
+
     if (pool.length === 0) {
       setLotPlayer(null);
-      setLotMessage('No available registered players are left for the lot.');
+      setLotMessage('No approved players are left for the lot.');
       return;
     }
 
     setIsSpinning(true);
     setLotPlayer(null);
-    setLotMessage(`Selecting randomly from ${pool.length} eligible registrations...`);
+    setLotMessage(`Selecting draw ${drawNumber} from approved players...`);
 
     window.setTimeout(() => {
       const randomIndex = Math.floor(Math.random() * pool.length);
       const pickedPlayer = pool[randomIndex];
       setLotPlayer(pickedPlayer);
-      setLotMessage(
-        pickedPlayer.status === 'unsold' || pickedPlayer.status === 'rejected'
-          ? 'Unsold approved player selected again from the lot pool.'
-          : 'Approved player selected from the current lot pool.'
-      );
+      setLotMessage(`Draw ${drawNumber}: ${pickedPlayer.name} selected.`);
       setIsSpinning(false);
     }, 5000);
   }
@@ -223,7 +244,7 @@ export default function AdminPage() {
     setLotMessage(
       newStatus === 'sold'
         ? `${player.name} was marked sold and removed from future lots.`
-        : `${player.name} was marked unsold and can appear again in the next lot draw.`
+        : `${player.name} was marked unsold and removed from the approved lot queue.`
     );
     setLotPlayer(null);
   }
@@ -1284,7 +1305,7 @@ export default function AdminPage() {
                   </div>
                   <div className="summary-card">
                     <span className="summary-value">{unsoldCount}</span>
-                    <span className="summary-copy">Unsold but eligible</span>
+                    <span className="summary-copy">Unsold players</span>
                   </div>
                 </div>
               </aside>
@@ -1414,6 +1435,7 @@ export default function AdminPage() {
                                   <div className="p-name">{registration.name}</div>
                                   <div className="p-phone">{registration.phone}</div>
                                   <div className="p-phone">{registration.playingRole}</div>
+                                  <div className="p-phone">Roll: {formatRollNumber(registration.rollNumber)}</div>
                                   <span className={`status-badge ${getStatusClass(registration.status)}`}>
                                     {getStatusLabel(registration.status)}
                                   </span>
@@ -1435,10 +1457,10 @@ export default function AdminPage() {
                         </h2>
                         <p>
                           Start the lot to pull one approved player. Sold players are removed from
-                          future draws. Unsold players stay eligible for the next random pick.
+                          future draws. Most picks are random, with reserved draw positions kept fixed.
                         </p>
                       </div>
-                      <div className="panel-chip">{eligibleLotCount} players in lot pool</div>
+                      <div className="panel-chip">{eligibleLotCount} approved players in queue</div>
                     </div>
 
                     <div className="lot-stage">
@@ -1454,12 +1476,12 @@ export default function AdminPage() {
 
                         <div className="lot-meta">
                           <span className="lot-meta-item">Approved: {approvedCount}</span>
-                          <span className="lot-meta-item">Unsold: {unsoldCount}</span>
+                          <span className="lot-meta-item">Random draw</span>
                           <span className="lot-meta-item">Sold excluded: {soldCount}</span>
                         </div>
 
                         <p className="lot-note">
-                          {lotMessage || 'Press Start Lot to select one player from the active pool.'}
+                          {lotMessage || 'Press Start Lot to select a random approved player.'}
                         </p>
                       </div>
 
@@ -1482,6 +1504,9 @@ export default function AdminPage() {
                             </div>
                             <div className="p-phone" style={{ textAlign: 'center', marginBottom: 8 }}>
                               {formatDisplayNumber(lotPlayer.displayNumber)}
+                            </div>
+                            <div className="p-phone" style={{ textAlign: 'center', marginBottom: 8 }}>
+                              Roll: {formatRollNumber(lotPlayer.rollNumber)}
                             </div>
                             <div className="p-phone" style={{ textAlign: 'center', marginBottom: 8 }}>
                               {lotPlayer.phone}
@@ -1551,7 +1576,7 @@ export default function AdminPage() {
                           <div className="lot-empty">
                             <div>
                               <strong>Ready For Draw</strong>
-                              The next approved player will appear here with Sold and Unsold controls.
+                              The selected approved player will appear here with Sold and Unsold controls.
                             </div>
                           </div>
                         )}
@@ -1598,6 +1623,7 @@ export default function AdminPage() {
                       {selectedReg.name}
                     </h2>
                     <p className="p-phone">Display No: {formatDisplayNumber(selectedReg.displayNumber)}</p>
+                    <p className="p-phone">Roll No: {formatRollNumber(selectedReg.rollNumber)}</p>
                     <p className="p-phone">{selectedReg.phone}</p>
                     <p className="p-phone">Role: {selectedReg.playingRole}</p>
                     <p className="p-phone">

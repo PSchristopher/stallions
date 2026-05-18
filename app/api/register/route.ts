@@ -32,6 +32,19 @@ async function requiredFile(value: FormDataEntryValue | null, label: string) {
   return value as File;
 }
 
+async function generateRollNumber() {
+  for (let attempt = 0; attempt < 40; attempt += 1) {
+    const rollNumber = Math.floor(Math.random() * 900000) + 100000;
+    const existing = await query('SELECT id FROM registrations WHERE roll_num = $1', [rollNumber]);
+
+    if (existing.rowCount === 0) {
+      return rollNumber;
+    }
+  }
+
+  throw new Error('Unable to create a unique roll number. Please try again.');
+}
+
 export async function POST(request: Request) {
   try {
     const formData = await request.formData();
@@ -61,14 +74,19 @@ export async function POST(request: Request) {
       saveFile(aadhaarFile, 'aadhaar-photo'),
       saveFile(paymentProofFile, 'payment-proof')
     ]);
+    const rollNumber = await generateRollNumber();
 
     const inserted = await query(
-      'INSERT INTO registrations (name, phone, playing_role, photo_url, aadhaar_url, payment_proof_url, status) VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING display_number AS "displayNumber"',
-      [name, phone, playingRole, photoUrl, aadhaarUrl, paymentProofUrl, 'pending']
+      'INSERT INTO registrations (roll_num, name, phone, playing_role, photo_url, aadhaar_url, payment_proof_url, status) VALUES ($1, $2, $3, $4, $5, $6, $7, $8) RETURNING display_number AS "displayNumber", roll_num AS "rollNumber"',
+      [rollNumber, name, phone, playingRole, photoUrl, aadhaarUrl, paymentProofUrl, 'pending']
     );
 
     return NextResponse.json(
-      { success: true, displayNumber: inserted.rows[0]?.displayNumber },
+      {
+        success: true,
+        displayNumber: inserted.rows[0]?.displayNumber,
+        rollNumber: inserted.rows[0]?.rollNumber
+      },
       { status: 201 }
     );
   } catch (error) {

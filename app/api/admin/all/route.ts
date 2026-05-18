@@ -8,7 +8,7 @@ export async function GET(request: Request) {
   }
 
   const result = await query(
-    'SELECT id, display_number AS "displayNumber", name, phone, playing_role AS "playingRole", status, photo_url AS "photoUrl", aadhaar_url AS "aadhaarUrl", payment_proof_url AS "paymentProofUrl", created_at AS "createdAt" FROM registrations ORDER BY created_at DESC',
+    'SELECT id, display_number AS "displayNumber", roll_num AS "rollNumber", name, phone, playing_role AS "playingRole", status, photo_url AS "photoUrl", aadhaar_url AS "aadhaarUrl", payment_proof_url AS "paymentProofUrl", created_at AS "createdAt" FROM registrations ORDER BY created_at DESC',
     []
   );
 

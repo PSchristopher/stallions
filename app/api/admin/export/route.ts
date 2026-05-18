@@ -6,6 +6,7 @@ export const runtime = 'nodejs';
 
 type ApprovedPlayer = {
   displayNumber: number;
+  rollNumber: number;
   name: string;
   phone: string;
   playingRole: string;
@@ -41,6 +42,7 @@ export async function GET(request: Request) {
   const result = await query(
     `SELECT
       display_number AS "displayNumber",
+      roll_num AS "rollNumber",
       name,
       phone,
       playing_role AS "playingRole",

@@ -8,7 +8,7 @@ export async function GET(request: Request) {
   }
 
   const result = await query(
-    'SELECT id, display_number AS "displayNumber", name, phone, playing_role AS "playingRole", status, created_at AS "createdAt" FROM registrations WHERE status = $1 ORDER BY created_at ASC',
+    'SELECT id, display_number AS "displayNumber", roll_num AS "rollNumber", name, phone, playing_role AS "playingRole", status, created_at AS "createdAt" FROM registrations WHERE status = $1 ORDER BY created_at ASC',
     ['pending']
   );
 
